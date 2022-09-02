@@ -34,8 +34,8 @@ module.exports = class UserController {
         //Verificar se o usuário exite
         const userExists = await User.findOne({ email: email })
 
-        if(userExists){
-            res.status(422).json({message: 'E-mail já cadastrado! Por favor utilize outro endereço de e-mail'})
+        if (userExists) {
+            res.status(422).json({ message: 'E-mail já cadastrado! Por favor utilize outro endereço de e-mail' })
             return
         }
 
@@ -55,8 +55,40 @@ module.exports = class UserController {
             const newUser = await user.save()
             await createUserToken(newUser, req, res)
         } catch (error) {
-            res.status(500).json({message: error})
+            res.status(500).json({ message: error })
         }
 
+    }
+
+    static async login(req, res) {
+
+        const { email, password } = req.body
+
+        if (!email) {
+            res.status(422).json({ message: 'O e-mail é obrigatório' })
+            return
+        }
+        if (!password) {
+            res.status(422).json({ message: 'A senha é obrigatória' })
+            return
+        }
+
+        const user = await User.findOne({ email: email })
+
+        if (!user) {
+            res.status(404).json({ message: 'Não há usuário cadastrado com esse e-mail' })
+            return
+        }
+
+        //verificar se a senha é a mesma do banco
+
+        const checkPassword = await bcrypt.compare(password, user.password)
+
+        if (!checkPassword) {
+            res.status(422).json({ message: 'Senha inválida' })
+            return
+        }
+
+        await createUserToken(user, req, res)
     }
 }
