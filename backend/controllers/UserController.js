@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const createUserToken = require('../helpers/create-user-token')
 const getToken = require('../helpers/get-token')
 const getUserbyToken = require('../helpers/get-user-by-token')
+const { findOne, findOneAndUpdate } = require('../models/User')
 module.exports = class UserController {
     static async register(req, res) {
         const { name, email, phone, password, confirmPassword } = req.body
@@ -154,19 +155,32 @@ module.exports = class UserController {
             res.status(422).json({ message: 'O telefone é obrigatório' })
             return
         }
-        if (!password) {
-            res.status(422).json({ message: 'A senha é obrigatória' })
-            return
-        }
-        if (!confirmPassword) {
-            res.status(422).json({ message: ' A confirmação de senha é obrigatória' })
-            return
-        }
+        user.phone = phone
         if (password !== confirmPassword) {
             res.status(422).json({ message: 'A senha e a confirmação precisam ser iguais!' })
             return
+        } else if (password === confirmPassword && password !== null) {
+
+            const salt = await bcrypt.genSalt(12)
+            const passwordHash = await bcrypt.hash(password, salt)
+
+            user.password = passwordHash
         }
-        
+
+        try {
+            //
+            await User.findOneAndUpdate(
+                { _id: user._id },
+                { $set: user },
+                { new: true }
+            )
+            res.status(200).json({ message: "Usuário atualizado com sucesso" })
+        } catch (error) {
+            res.status(500).json({ message: error })
+            return
+        }
+
+
 
     }
 }
