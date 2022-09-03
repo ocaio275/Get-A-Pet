@@ -79,7 +79,7 @@ module.exports = class UserController {
         const user = await User.findOne({ email: email })
 
         if (!user) {
-            res.status(404).json({ message: 'Não há usuário cadastrado com esse e-mail' })
+            res.status(422).json({ message: 'Não há usuário cadastrado com esse e-mail' })
             return
         }
 
@@ -94,20 +94,32 @@ module.exports = class UserController {
 
         await createUserToken(user, req, res)
     }
-    
-    static async checkUser(req, res){
+
+    static async checkUser(req, res) {
 
         let currentUser
-        
-        if(req.headers.authorization){
+
+        if (req.headers.authorization) {
             const token = getToken(req)
             const decoded = jwt.verify(token, 'nossascret')
             currentUser = await User.findById(decoded.id)
 
             currentUser.password = undefined
-        }else{
+        } else {
             currentUser = null
         }
         res.status(200).send(currentUser)
+    }
+
+    static async getUserById(req, res) {
+        const id = req.params.id
+
+        const user = await User.findById(id).select('-password')
+
+        if (!user) {
+            res.status(422).json({ message: "Nenhum usuário encontrado" })
+            return
+        }
+        res.status(200).json({user})
     }
 }
