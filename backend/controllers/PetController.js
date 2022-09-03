@@ -5,8 +5,10 @@ const getToken = require('../helpers/get-token')
 const getUserByToken = require('../helpers/get-user-by-token')
 
 module.exports = class PetController {
-    static async create(req, res){
+    static async create(req, res) {
         const { name, age, weight, color } = req.body
+
+        const images = req.files
 
         const available = true
 
@@ -14,20 +16,24 @@ module.exports = class PetController {
 
         //validações
 
-        if(!name){
-            res.status(422).json({ message: "O nome é obrigatório"})
-            return            
-        }
-        if(!age){
-            res.status(422).json({ message: "A idade é obrigatória"})
+        if (!name) {
+            res.status(422).json({ message: "O nome é obrigatório" })
             return
         }
-        if(!weight){
-            res.status(422).json({ message: "O peso é obrigatório"})
+        if (!age) {
+            res.status(422).json({ message: "A idade é obrigatória" })
             return
         }
-        if(!color){
-            res.status(422).json({ message: "A cor é obrigatória"})
+        if (!weight) {
+            res.status(422).json({ message: "O peso é obrigatório" })
+            return
+        }
+        if (!color) {
+            res.status(422).json({ message: "A cor é obrigatória" })
+            return
+        }
+        if (images.length === 0) {
+            res.status(422).json({ message: "A imagem é obrigatória" })
             return
         }
 
@@ -51,11 +57,15 @@ module.exports = class PetController {
             }
         })
 
+        images.map((image) => {
+            pet.images.push(image.filename)
+        })
+
         try {
             const newPet = await pet.save()
-            res.status(201).json({message: "Pet cdastrado com sucesso", newPet})
+            res.status(201).json({ message: "Pet cdastrado com sucesso", newPet })
         } catch (error) {
-            res.status(500).json({message: error})
+            res.status(500).json({ message: error })
         }
     }
 }
