@@ -133,7 +133,9 @@ module.exports = class UserController {
 
         const { name, email, phone, password, confirmPassword } = req.body
 
-        let image = ''
+        if(req.file){
+            user.image = req.file.filename
+        }
 
         if (!name) {
             res.status(422).json({ message: 'O nome é obrigatório' })
@@ -159,7 +161,7 @@ module.exports = class UserController {
         if (password !== confirmPassword) {
             res.status(422).json({ message: 'A senha e a confirmação precisam ser iguais!' })
             return
-        } else if (password === confirmPassword && password !== null) {
+        } else if (password == confirmPassword && password != null) {
 
             const salt = await bcrypt.genSalt(12)
             const passwordHash = await bcrypt.hash(password, salt)
