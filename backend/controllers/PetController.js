@@ -5,6 +5,13 @@ const getToken = require('../helpers/get-token')
 const getUserByToken = require('../helpers/get-user-by-token')
 
 module.exports = class PetController {
+    static async getAll(req, res){
+
+        const pets = await Pet.find().sort('-createdAt')
+
+        res.status(200).json({ pets: pets})
+
+    }
     static async create(req, res) {
         const { name, age, weight, color } = req.body
 
