@@ -1,15 +1,26 @@
+import { useState } from "react"
 /* Component */
 import Input from "../../form/Input"
 import styles from "../../form/Form.module.css"
 import { Link } from "react-router-dom"
 function Register() {
+    const [user, setUser] = useState({})
+
+
     function handleChage(e) {
+        setUser({ ...user, [e.target.name]: e.target.value })
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault()
+        //Enviar usuário para o banco
+        console.log(user)
 
     }
     return (
         <section className={styles.form_control}>
             <h1>Registrar</h1>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <Input
                     text="Nome"
                     type="text"
