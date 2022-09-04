@@ -1,11 +1,14 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 /* Component */
 import Input from "../../form/Input"
 import styles from "../../form/Form.module.css"
 import { Link } from "react-router-dom"
+
+/**Context */
+import { Context } from "../../../context/UserContext"
 function Register() {
     const [user, setUser] = useState({})
-
+    const { register } = useContext(Context)
 
     function handleChage(e) {
         setUser({ ...user, [e.target.name]: e.target.value })
@@ -13,8 +16,8 @@ function Register() {
 
     function handleSubmit(e) {
         e.preventDefault()
-        //Enviar usuário para o banco
-        console.log(user)
+
+        register(user)
 
     }
     return (

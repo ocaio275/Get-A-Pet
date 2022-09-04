@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 export default function useAuth() {
-    async function regiter(user) {
+    async function register(user) {
         try {
             const data = await api.post('/users/register', user).then((response) => {
                 return response.data
@@ -16,5 +16,5 @@ export default function useAuth() {
             console.log(error)
         }
     }
-    return { regiter }
+    return { register }
 }
