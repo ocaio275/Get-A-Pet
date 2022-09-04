@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken')
 const createUserToken = require('../helpers/create-user-token')
 const getToken = require('../helpers/get-token')
 const getUserbyToken = require('../helpers/get-user-by-token')
-const { findOne, findOneAndUpdate } = require('../models/User')
+//const { findOne, findOneAndUpdate } = require('../models/User')
+const ObjectId = require('mongoose').Types.ObjectId
 module.exports = class UserController {
     static async register(req, res) {
         const { name, email, phone, password, confirmPassword } = req.body
@@ -115,6 +116,11 @@ module.exports = class UserController {
 
     static async getUserById(req, res) {
         const id = req.params.id
+
+        if(!ObjectId.isValid(id)){
+            res.status(422).json({message: "Id inválido"})
+            return
+        }
 
         const user = await User.findById(id).select('-password')
 
