@@ -1,12 +1,13 @@
 /* Component */
 import Input from "../../form/Input"
-
+import styles from "../../form/Form.module.css"
+import { Link } from "react-router-dom"
 function Register() {
     function handleChage(e) {
 
     }
     return (
-        <section>
+        <section className={styles.form_control}>
             <h1>Registrar</h1>
             <form>
                 <Input
@@ -45,6 +46,9 @@ function Register() {
                     handleOnChange={handleChage}
                 />
                 <input type="submit" value="Cadastrar" />
+                <p>
+                    Já tem conto? <Link to="/login" >Clique aqui.</Link >
+                </p>
             </form>
         </section>
     )
