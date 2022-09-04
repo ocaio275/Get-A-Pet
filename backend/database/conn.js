@@ -1,8 +1,9 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 
 
 async function main(){
-    await mongoose.connect('mongodb://localhost:27017/getapet')
+    await mongoose.connect(process.env.DATABASE)
     console.log('conectado ao Mongo')
 }
 

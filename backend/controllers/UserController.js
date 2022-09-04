@@ -1,3 +1,4 @@
+require('dotenv').config()
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -104,7 +105,7 @@ module.exports = class UserController {
 
         if (req.headers.authorization) {
             const token = getToken(req)
-            const decoded = jwt.verify(token, 'nossascret')
+            const decoded = jwt.verify(token, process.env.SECRET)
             currentUser = await User.findById(decoded.id)
 
             currentUser.password = undefined
