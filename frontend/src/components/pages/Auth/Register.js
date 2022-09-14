@@ -60,10 +60,10 @@ function Register() {
                     handleOnChange={handleChage}
                 />
                 <input type="submit" value="Cadastrar" />
-                <p>
-                    Já tem conto? <Link to="/login" >Clique aqui.</Link >
-                </p>
             </form>
+            <p>
+                Já tem conta? <Link to="/login" >Clique aqui.</Link >
+            </p>
         </section>
     )
 }
