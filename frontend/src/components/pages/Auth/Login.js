@@ -1,15 +1,26 @@
 import { useState, useContext } from 'react'
 import Input from '../../form/Input'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styles from '../../form/Form.module.css'
 
 import { Context } from '../../../context/UserContext'
 function Login() {
-    function handleChange() { }
+    const [user, setUser] = useState({})
+    const { login } = useContext(Context)
+
+
+    function handleChange(e) {
+        setUser({ ...user, [e.target.name]: e.target.value })
+        
+    }
+    function handleSubmit(e){
+        e.preventDefault()
+        login(user)
+    }
     return (
         <section className={styles.form_control}>
             <h1>Login</h1>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <Input
                     text="E-mail"
                     type="email"
@@ -26,9 +37,9 @@ function Login() {
                 />
                 <input type="submit" value="Entrar" />
             </form>
-                <p>
-                    Ainda não tem uma conta? <Link to="/register" >Clique aqui.</Link >
-                </p>
+            <p>
+                Ainda não tem uma conta? <Link to="/register" >Clique aqui.</Link >
+            </p>
         </section>
     )
 }
