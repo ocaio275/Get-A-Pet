@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const conn = require('./database/conn')
 const app = express()
+const logger = require('morgan')
 
 /* Import Routes */
 const UserRoutes = require('./routes/UserRoutes')
@@ -16,6 +17,7 @@ app.use(cors({
     origin: 'http://localhost:3000'
 }))
 
+app.use(logger('dev'))
 /* Public folder */
 app.use(express.static('public'))
 
