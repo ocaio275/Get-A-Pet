@@ -5,21 +5,64 @@ import styles from './Profile.module.css'
 import formStyles from '../../form/Form.module.css'
 
 import Input from '../../form/Input'
+
+
+import useFlashMessage from '../../../hooks/useFlashMessage'
 function Profile() {
     const [user, setUser] = useState({})
     const [token] = useState(localStorage.getItem('token') || '')
+    const {setFlashMessage} = useFlashMessage()
 
-    useEffect(()=>{
-        api.get('/users/checkuser',{
+    useEffect(() => {
+        api.get('/users/checkuser', {
             headers: {
                 Authorization: `Bearer ${JSON.parse(token)}`
             }
-        }).then((response) =>{
+        }).then((response) => {
             setUser(response.data)
         })
     }, [token])
-    function onFileChange(e) { }
-    function handleChange(e) { }
+    /**
+     * `onFileChange` is a function that takes an event as an argument and sets the user state to the event
+     * target's name and the event target's file.
+     * @param e - the event object
+     */
+    function onFileChange(e) {
+        setUser({ ...user, [e.target.name]: e.target.files[0] })
+    }
+    /**
+     * When the user changes the value of an input, update the user object with the new value.
+     * @param e - the event object
+     */
+    function handleChange(e) {
+        setUser({ ...user, [e.target.name]: e.target.value })
+    }
+
+    async function handleSubmit(e){
+        e.preventDefault()
+       
+        let msgType = 'success'
+
+        const formData = new FormData()
+
+        await Object.keys(user).forEach((key)=> 
+            formData.append(key, user[key])
+        )
+        const data = await api.patch(`/users/edit/${user._id}`, formData,{
+            headers:{
+                Authorization: `Bearer ${JSON.parse(token)}`,
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then((response)=>{
+            return response.data
+        })
+        .catch((err) => {
+            msgType = 'error'
+            return err.response.data
+        })
+        setFlashMessage(data.message, msgType)
+    }
     return (
         <section>
             <div className={styles.profile_headers}>
@@ -27,7 +70,7 @@ function Profile() {
                 <p>Preview Image</p>
             </div>
 
-            <form className={formStyles.form_control}>
+            <form onSubmit={handleSubmit} className={formStyles.form_control}>
                 <Input
                     text="Imagem"
                     type="file"
